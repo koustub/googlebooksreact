@@ -4,9 +4,9 @@ const orm = require( './db/orm.js' );
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 8080;
 const app = express();
-app.use(bodyParser.json());
-app.use( express.urlencoded({ extended: false }) );
-app.use( express.static('client/build/') );
+app.use(express.json());
+app.use(express.static(path.join(__dirname, "build")));
+app.use(express.urlencoded({ extended: false }));
 
 app.post('/api/saveBooks',  async function ( req, res ){
         console.log(`[Object received to be saved in mongo DB]`,req.body);
@@ -23,6 +23,11 @@ app.get('/api/getBooks',async function( req,res ){
     const book = await orm.removeBook(req.params.title);
     console.log( `[Job done]` );
 } );
+
+app.get('/*', function( req,res ){
+    console.log("redirect to index page!");
+    res.sendFile( path.join(__dirname, 'build', 'index.html') );
+  });
 app.listen( PORT, function(){
     console.log( `[Google Books server] RUNNING, http://localhost:${PORT}` );
  });
